@@ -1,0 +1,70 @@
+@startuml SpaceCar
+
+class Obstaculo{
+    -posX
+    -posY
+    +Aparecer()
+    +Colisionar()
+}
+class Caja
+class Charco
+
+
+class Juego{
+    + Comenzar()
+    + Terminar()
+}
+class Partida{
+    + Tiempo : float
+    + Iniciar()
+    + Perder()
+
+}
+class Vida{
+    + Restablecer()
+}
+class Puntuacion{
+    + Tiempo : float
+    + Acumular()
+    + Restablecer()
+    + GuardarPuntuacion()
+
+}
+class Jugador{
+    + Jugar()
+}
+
+class Velocidad{
+    + Alta()
+    + Baja()
+}
+
+class Carro{
+    + posX()
+    + posY()
+    + MoverArriba()
+    + MoverAbajo()
+    + Colisionar()
+    + Aparecer()
+}
+class Colisionable{
+    +DetectarColision()
+}
+
+
+Juego "1" *-- "1" Jugador
+Juego "1" *-- "1" Partida 
+
+Jugador "1" o-- "1" Carro
+Jugador "1" *-- "1" Vida
+Jugador "1" *-- "1" Puntuacion
+
+Partida "1" *-- "*" Obstaculo
+
+Charco --|> Obstaculo
+Caja --|> Obstaculo
+
+Obstaculo --|> Colisionable
+Carro --|> Colisionable
+
+@enduml
