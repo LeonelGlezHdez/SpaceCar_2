@@ -1,8 +1,9 @@
 # Directorios de origen y destino
 SRC_DIR := src
 BIN_DIR := bin
+INC_DIR := include
 
-SFML := -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio -lbox2d -mwindows
+SFML := -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 
 # Obtener todos los archivos .cpp en el directorio de origen
 CPP_FILES := $(wildcard $(SRC_DIR)/*.cpp)
@@ -11,7 +12,7 @@ CPP_FILES := $(wildcard $(SRC_DIR)/*.cpp)
 EXE_FILES := $(patsubst $(SRC_DIR)/%.cpp,$(BIN_DIR)/%.exe,$(CPP_FILES))
 
 # Regla para compilar cada archivo .cpp y generar el archivo .exe correspondiente
-$(BIN_DIR)/%.exe: $(SRC_DIR)/%.cpp include/Game.hpp include/Carro.hpp
+$(BIN_DIR)/%.exe: $(SRC_DIR)/%.cpp $(wildcard $(INC_DIR)/*.hpp)
 	g++ $(CPP_FILES) -o $@ $(SFML) -Iinclude
 
 # Regla por defecto para compilar todos los archivos .cpp

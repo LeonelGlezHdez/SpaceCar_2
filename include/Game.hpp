@@ -1,4 +1,3 @@
-#pragma once
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/System.hpp>
@@ -12,21 +11,21 @@
 #include <chrono>
 
 #include <Puntos.hpp>
+#include <Paisaje.hpp>
 
 
 
 class Game
 {
 private:
-    bool endGame;
-    bool gameStarted;
+    bool EndGame;
+    bool GameStarted;
 
-    sf::RenderWindow *window;
-    sf::VideoMode videoMode;
+    sf::RenderWindow Pantalla;
     sf::Event event;
 
-    sf::SoundBuffer introBuffer;
-    sf::Sound introTone;
+    sf::SoundBuffer IntroBuffer;
+    sf::Sound IntroTone;
 
     sf::SoundBuffer stageStartBuffer;
     sf::Sound stageStartTone;
@@ -37,52 +36,42 @@ private:
     sf::Texture backgroundTexture;
     sf::Sprite background;
 
-    Puntos *puntos;
+    Puntos puntos;
 
-    int toneTimer;
+    int ToneTimer;
     int toneTimerLimit;
 
-    void initVariables()
+    sf::Font font;
+    sf::Text pointsText;
+
+    void iniciarVariables()
     {
-        this->endGame = false;
+        this->EndGame = false;
 
-        this->window = nullptr;
-
-        this->toneTimer = 0;
+        this->ToneTimer = 0;
         this->toneTimerLimit = 4000;
+
+        if (!this->font.loadFromFile("./assets/fonts/Minecraft.ttf"))
+        {
+            std::cout << "ERROR::Puntos::innitFont::No se pudo cargar la fuente" << std::endl;
+        }
+
+        this->pointsText.setFont(this->font);
+        this->pointsText.setCharacterSize(30);
+        this->pointsText.setFillColor(sf::Color::White);
+        this->pointsText.setPosition(10.f, 10.f);
+        this->pointsText.setString("");
     }
 
-    void initWindow()
+    void sonidoJuego()
     {
-        this->videoMode.height = 768;
-        this->videoMode.width = 1024;
-
-        this->window = new sf::RenderWindow(this->videoMode, "¡¡Space Car!!", sf::Style::Titlebar | sf::Style::Close);
-
-        this->window->setFramerateLimit(165);
-    }
-
-    void initEntities()
-    {
-
-        this->puntos = new Puntos();
-    }
-
-    void initGameSound()
-    {
-        if (!this->introBuffer.loadFromFile("assets/images/music/intro.wav"))
+        if (!this->IntroBuffer.loadFromFile("./assets/music/intro.wav"))
         {
             std::cout << "ERROR::Game::innitGameSound::No se pudo cargar el sonido de inicio" << std::endl;
         }
-        introTone.setBuffer(introBuffer);
+        IntroTone.setBuffer(IntroBuffer);
 
-        /*if (!this->stageStartBuffer.loadFromFile("./assets/music/inicioetapaD.wav"))
-        {
-            std::cout << "ERROR::Game::innitGameSound::No se pudo cargar el sonido de inicio de nivel" << std::endl;
-        }
-        stageStartTone.setBuffer(stageStartBuffer);
-        */
-        if (!this->gameOverBuffer.loadFromFile("./assets/images/music/EndGame.wav"))
+        if (!this->gameOverBuffer.loadFromFile("./assets/music/EndGame.wav"))
         {
             std::cout << "ERROR::Game::innitGameSound::No se pudo cargar el sonido de fin de juego" << std::endl;
         }
@@ -91,27 +80,25 @@ private:
 
 
 public:
-    Game(/* args */)
+    Game() : Pantalla(sf::RenderWindow(sf::VideoMode(768, 411), "SPACE CAR", sf::Style::Titlebar | sf::Style::Close))
     {
-        this->initVariables();
-        this->initWindow();
-        this->initGameSound();
-        this->initEntities();
+        this->iniciarVariables();
+        this->sonidoJuego();
+        this->innitGameBackground();
     }
 
     ~Game()
     {
-        delete this->window;
     }
 
     const bool running() const
     {
-        return this->window->isOpen();
+        return this->Pantalla.isOpen();
     }
 
     const bool getEndGame() const
     {
-        return this->endGame;
+        return this->EndGame;
     }
 
     void innitGameBackground()
@@ -125,185 +112,107 @@ public:
 
     void renderGameBackground()
     {
-        this->window->draw(this->background);
+        this->Pantalla.draw(this->background);
     }
 
-        void printPoints()
+    void printPoints()
     {
-        this->puntos->setTextSize(20);
-        this->puntos->setTextColor(sf::Color::White);
-        this->puntos->setPosition(10.f, 10.f);
-        //this->puntos->setText(std::stringstream() << this->puntos->getPuntos());
+        this->puntos.setTextSize(20);
+        this->puntos.setTextColor(sf::Color::White);
+        this->puntos.setPosition(10.f, 10.f);
+        this->puntos.render(this->Pantalla);
+        this->Pantalla.draw(this->pointsText);
+
     }
 
     void loadStartScreen()
     {
-
-        this->window->clear();
-
         this->renderGameBackground();
 
-        this->puntos->setTextSize(34);
-        this->puntos->setTextColor(sf::Color::Black);
-        this->puntos->setPosition(210.f, 100.f);
-        this->puntos->setText(std::stringstream() << "SPACE CAR");
-        this->puntos->render(this->window);
+        this->puntos.setTextSize(34);
+        this->puntos.setTextColor(sf::Color::Black);
+        this->puntos.setPosition(210.f, 100.f);
+        this->puntos.setText("SPACE CAR");
+        this->puntos.render(this->Pantalla);
 
-        this->puntos->setTextSize(12);
-        this->puntos->setTextColor(sf::Color::Black);
-        this->puntos->setPosition(160.f, 380.f);
-        this->puntos->setText(std::stringstream() << "Presiona Enter para continuar");
-        this->puntos->render(this->window);
+        this->puntos.setTextSize(12);
+        this->puntos.setTextColor(sf::Color::Black);
+        this->puntos.setPosition(160.f, 380.f);
+        this->puntos.setText("Presiona Enter para continuar");
+        this->puntos.render(this->Pantalla);
 
-        this->puntos->setTextSize(10);
-        this->puntos->setTextColor(sf::Color::Black);
-        this->puntos->setPosition(220.f, 780.f);
-        this->puntos->setText(std::stringstream() << "23110177  -  23110186");
-        this->puntos->render(this->window);
-
-        this->pollEvents();
-
-        if (this->toneTimer == 0)
-        {
-            this->introTone.play();
-            this->toneTimer = this->toneTimerLimit;
-        }
-        else
-        {
-            this->toneTimer--;
-        }
-
-        this->window->display();
     }
 
-    void loadstageStartScreen()
+    void pantallaCarga()
     {
-        this->stageStartTone.play();
-
-        this->window->clear();
         this->renderGameBackground();
-        this->puntos->setTextSize(16);
-        this->puntos->setTextColor(sf::Color::Cyan);
-        this->puntos->setPosition(225.f, 250.f);
-        this->puntos->setText(std::stringstream() << "Preparate Madafaker");
-        this->puntos->render(this->window);
+        
+        this->puntos.setTextSize(16);
+        this->puntos.setTextColor(sf::Color::Cyan);
+        this->puntos.setPosition(225.f, 250.f);
+        this->puntos.setText("Preparate Madafaker");
+        this->puntos.render(this->Pantalla);
 
         this->printPoints();
-        this->window->display();
-
-        std::this_thread::sleep_for(std::chrono::seconds(3));
     }
 
     void pollEvents()
     {
-        /*
-            Esta función se encarga de revisar si ocurre algún evento relacionado a la ventana, por ejemplo,
-            si el usuario presiona el botón de cerrar la ventana, la ventana se cerrará lo que terminará el
-            juego, lo mismo sucede con la tecla ESC en el teclado. Sin embargo, la función pollEvents también
-            se encarga de revisar si el usuario presiona la tecla ENTER, lo que en la pantalla de inicio, dará
-            inicio al juego.
-        */
-
-        while (this->window->pollEvent(this->event)) // Revisa si en la ventana ocurre un evento
+        while (this->Pantalla.pollEvent(this->event))
         {
-            switch (this->event.type) // Determina la acción segun que evento suceda
+            switch (this->event.type)
             {
-            case sf::Event::Closed: // Cerrar ventana si se presiona la "X" de la ventana
-                this->window->close();
+            case sf::Event::Closed:
+                this->Pantalla.close();
                 break;
 
             case sf::Event::KeyPressed:
                 if (this->event.key.code == sf::Keyboard::Escape) // Cerrar ventana si se presiona ESC en el teclado
                 {
-                    this->window->close();
+                    this->Pantalla.close();
                 }
-                else if (this->event.key.code == sf::Keyboard::Enter && !this->gameStarted)
+                else if (this->event.key.code == sf::Keyboard::Enter && !this->GameStarted)
                 {
-                    this->gameStarted = true;
-                    this->introTone.stop();
-                    this->loadstageStartScreen();
-                    this->introTone.stop();
+                    this->GameStarted = true;
+                    this->IntroTone.stop();
                 }
                 break;
             }
         }
     }
 
-    void update()
+    void actualizar()
     {
-        /*
-            Esta función se encarga de actualizar todos los eventos que ocurran en el juego previo a ser renderizados.
-            Se ejecuta solo si el juego ha sido iniciado (el usuario ha presionado la tecla ENTER en la pantalla de
-            inicio).
-        */
+        this->pollEvents();
 
-        if (gameStarted == true)
+        if (this->ToneTimer == 0)
         {
-            /*     // Actualiza los eventos de la ventana
-            this->pollEvents();
-
-            // Actualiza todo lo relacionado con la nave, como su posición, proyectiles, etc.
-            this->updateNave();
-
-            // Actualiza todo lo relacionado con los enemigos, como su posición, movimiento, estado, etc.
-            this->updateEnemigos();
-
-            // Actualiza los disparos realizados por los enemigos
-            for (int i = 0; i < this->enemigosActivos.size(); i++)
-            {
-                std::visit([this](const auto &arg)
-                           { arg->update(); }, enemigosActivos[i]);
-            }
-            */
-            // Actualiza el puntaje
-            this->printPoints();
+            this->IntroTone.play();
+            this->ToneTimer = this->toneTimerLimit;
         }
-        else if (this->gameStarted == false)
+        else
         {
+            this->ToneTimer--;
+        }
+
+    }
+
+    void renderizar()
+    {
+        // Limpiar
+        this->Pantalla.clear();
+        
+        
+        // Dibujar
+        if (GameStarted){
+            this->printPoints();
+        } else {
             this->loadStartScreen();
         }
+
+        // Mostrar
+        this->Pantalla.display();
     }
-
-    void render()
-    {
-        if (gameStarted == true) // Solo comienza a renderizar si el juego ha comenzado (Se presionó la tecla ENTER)
-        {
-            /*
-                Muestra en la ventana del juego todos los elementos
-                que sean dibujados previamente según el siguiente orden:
-
-                - Borra el frame anterior
-                - Dibuja todos los elementos especificados
-                - Muestra el frame
-            */
-
-            this->window->clear();
-
-            // Dibujar elementos en ventana
-
-            this->renderGameBackground();
-
-            this->puntos->render(this->window);
-
-            //this->nave->render(this->window);
-
-            /*for (int i = 0; i < this->enemigosActivos.size(); i++)
-            {
-                std::visit([this](const auto &arg)
-                           { arg->render(this->window); }, enemigosActivos[i]);
-            }
-            */
-            // Una vez dibujados los elementos, se muestra la ventana (Equivale a 1 frame)
-
-            this->window->display();
-        }
-    }
-
-
-
-
-
-
 
 };
 

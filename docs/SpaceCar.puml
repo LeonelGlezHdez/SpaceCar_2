@@ -1,70 +1,140 @@
-@startuml SpaceCar
+@startuml space_car_complete
 
-class Obstaculo{
-    -posX
-    -posY
-    +Aparecer()
-    +Colisionar()
-}
-class Caja
-class Charco
+class Carro
+{
+    - sf::Sprite carro
+    - sf::Texture texture
+    - float velocidad
+    - int vidas
+    - bool invulnerable
+    - sf::SoundBuffer buffer
+    - sf::Sound colision
 
+    - void inicializarTextura()
+    - void inicializarSprite()
+    - void inicializarSonido()
+    - void inicializarVariables()
 
-class Juego{
-    + Comenzar()
-    + Terminar()
-}
-class Partida{
-    + Tiempo : float
-    + Iniciar()
-    + Perder()
+    + void mover(float dirX, float dirY)
+    + void update(const sf::RenderTarget *target)
+    + void render(sf::RenderTarget *target)
+    + void aumentarVelocidad(float incremento)
+    + void disminuirVelocidad(float decremento)
+    + void incrementarVida()
+    + void decrementarVida()
+    + int getVidas()
+    + void setInvulnerable(bool invulnerable)
+    + bool esInvulnerable()
 
-}
-class Vida{
-    + Restablecer()
-}
-class Puntuacion{
-    + Tiempo : float
-    + Acumular()
-    + Restablecer()
-    + GuardarPuntuacion()
-
-}
-class Jugador{
-    + Jugar()
+    + Carro(float posX = 0.f, float posY = 0.f)
+    + ~Carro()
 }
 
-class Velocidad{
-    + Alta()
-    + Baja()
+class Aceite
+{
+    - sf::Sprite aceite
+    - sf::Texture texture
+    - float velocidad
+
+    - void inicializarTextura()
+    - void inicializarSprite()
+    - void inicializarVariables()
+
+    + void mover(float dirX, float dirY)
+    + void update(const sf::RenderTarget *target)
+    + void render(sf::RenderTarget *target)
+    + const sf::FloatRect getBounds() const
+
+    + Aceite(float posX = 0.f, float posY = 0.f)
+    + ~Aceite()
 }
 
-class Carro{
-    + posX()
-    + posY()
-    + MoverArriba()
-    + MoverAbajo()
-    + Colisionar()
-    + Aparecer()
-}
-class Colisionable{
-    +DetectarColision()
+class Señal
+{
+    - sf::Sprite sprite
 }
 
+class Paisaje
+{
+    - std::vector<Line> lines
+    - sf::Texture bg
+    - sf::Sprite sBackground
+    - int width
+    - int height
+    - int roadW
+    - int segL
+    - float camD
 
-Juego "1" *-- "1" Jugador
-Juego "1" *-- "1" Partida 
+    + void draw(sf::RenderWindow &app)
+}
 
-Jugador "1" o-- "1" Carro
-Jugador "1" *-- "1" Vida
-Jugador "1" *-- "1" Puntuacion
+class Game
+{
+    - bool endGame
+    - bool gameStarted
+    - sf::RenderWindow *window
+    - sf::VideoMode videoMode
+    - sf::Event event
+    - sf::SoundBuffer introBuffer
+    - sf::Sound introTone
+    - sf::SoundBuffer stageStartBuffer
+    - sf::Sound stageStartTone
+    - sf::SoundBuffer gameOverBuffer
+    - sf::Sound gameOverTone
+    - sf::Texture backgroundTexture
+    - sf::Sprite background
+    - Puntos *puntos
+    - Carro *carro
+    - std::vector<Aceite*> aceites
+    - int toneTimer
+    - int toneTimerLimit
 
-Partida "1" *-- "*" Obstaculo
+    - void initVariables()
+    - void initWindow()
+    - void initEntities()
+    - void initGameSound()
+    - void initGameBackground()
+    - void renderGameBackground()
+    - void printPoints()
+    - void loadStartScreen()
+    - void loadStageStartScreen()
+    - void pollEvents()
+    - void spawnAceite()
 
-Charco --|> Obstaculo
-Caja --|> Obstaculo
+    + const bool running() const
+    + const bool getEndGame() const
+    + void update()
+    + void render()
 
-Obstaculo --|> Colisionable
-Carro --|> Colisionable
+    + Game()
+    + ~Game()
+}
+
+class Puntos
+{
+    - sf::Font font
+    - sf::Text pointsText
+    - int points
+
+    - void initVariables()
+    - void initFont()
+    - void initText()
+
+    + void setPosition(float x, float y)
+    + void setTextColor(sf::Color color)
+    + void setTextSize(int size)
+    + void setPuntos(int p)
+    + void render(sf::RenderTarget &target)
+
+    + Puntos()
+    + ~Puntos()
+}
+
+Carro "1" o-- "*" Aceite
+Game "1" o-- "1" Carro
+Game "1" o-- "*" Aceite
+Game "1" o-- "1" Puntos
+Game "1" o-- "1" Paisaje
+Paisaje "1" o-- "*" Senal
 
 @enduml

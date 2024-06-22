@@ -6,21 +6,18 @@
 #include <time.h>
 
 #include <Game.hpp>
+#include <iostream>
 
-int main()
+int main(int argc, char const *argv[])
 {
     srand(time(static_cast<unsigned>(0)));
 
     Game game;
 
-    while (game.running() && !(game.getEndGame())) // Revisa constantemente si la ventana sigue abierta
+    while (game.running() && !(game.getEndGame()))
     {
-
-        // Update
-        game.update();
-
-        // Render
-        game.render();
+        game.actualizar();
+        game.renderizar();
     }
 
     return 0;

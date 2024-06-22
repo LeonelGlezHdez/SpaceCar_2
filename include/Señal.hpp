@@ -5,7 +5,6 @@
 #include <SFML/Audio.hpp>
 #include <iostream>
 
-#include <Obstaculo.hpp>
 
 class Señal
 {
