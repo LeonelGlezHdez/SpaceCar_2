@@ -1,72 +1,44 @@
-#pragma once
 #include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
-#include <SFML/Window.hpp>
-#include <SFML/System.hpp>
-
-#include <iostream>
 #include <sstream>
 
-class Puntos
-{
-private:
-    sf::Font font;
-    sf::Text pointsText;
-
-    int points;
-
-    void innitFont()
-    {
-        if (!this->font.loadFromFile("./assets/fonts/speed.ttf"))
-        {
-            std::cout << "ERROR::Puntos::innitFont::No se pudo cargar la fuente" << std::endl;
-        }
-    }
-
-    void innitText()
-    {
-        this->pointsText.setFont(this->font);
-        this->pointsText.setFillColor(sf::Color::Black);
-    }
-
+class Puntos {
 public:
-    void setPosition(float x, float y)
-    {
-        this->pointsText.setPosition(x, y);
+    Puntos(const sf::Font& font) {
+        // Inicializar el reloj
+        clock.restart();
+
+        // Configurar el texto de los puntos
+        pointsText.setFont(font);
+        pointsText.setCharacterSize(24);
+        pointsText.setFillColor(sf::Color::White);
+        pointsText.setPosition(10, 40);
     }
 
-    void setTextColor(sf::Color color)
-    {
-        this->pointsText.setFillColor(color);
+    void update() {
+        // Actualizar el tiempo transcurrido
+        timeElapsed = clock.getElapsedTime();
+        float seconds = timeElapsed.asSeconds();
+
+        // Actualizar los puntos basados en el tiempo transcurrido
+        points = static_cast<int>(seconds);
+
+        // Actualizar el texto del tiempo y los puntos
+        std::stringstream ss;
+
+        ss.str("");  // Limpiar el stringstream
+        ss << "Puntos: " << points;
+        pointsText.setString(ss.str());
     }
 
-    void setTextSize(int size)
-    {
-        this->pointsText.setCharacterSize(size);
+    void draw(sf::RenderWindow& window) {
+        window.draw(pointsText);
     }
 
-    void setText(std::string ss)
-    {
-        this->pointsText.setString(ss);
-    }
+private:
+    sf::Clock clock;
+    sf::Time timeElapsed;
+    int points = 0;
 
-    void render(sf::RenderTarget &target)
-    {
-        target.draw(this->pointsText);
-    }
-
-    void setPuntos(int p)
-    {
-        points = p;
-    }
-
-    Puntos()
-    {
-        this->points = 0;
-        this->innitFont();
-        this->innitText();
-    }
-    ~Puntos()
-    {
-    }
+    sf::Text timeText;
+    sf::Text pointsText;
 };

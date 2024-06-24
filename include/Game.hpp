@@ -11,7 +11,6 @@
 #include <chrono>
 
 #include <Puntos.hpp>
-#include <Paisaje.hpp>
 
 
 
@@ -80,7 +79,7 @@ private:
 
 
 public:
-    Game() : Pantalla(sf::RenderWindow(sf::VideoMode(768, 411), "SPACE CAR", sf::Style::Titlebar | sf::Style::Close))
+    Game() : Pantalla(sf::RenderWindow(sf::VideoMode(768, 411), "SPACE CAR", sf::Style::Titlebar))
     {
         this->iniciarVariables();
         this->sonidoJuego();
@@ -129,15 +128,15 @@ public:
     {
         this->renderGameBackground();
 
-        this->puntos.setTextSize(34);
+        this->puntos.setTextSize(65);
         this->puntos.setTextColor(sf::Color::Black);
         this->puntos.setPosition(210.f, 100.f);
         this->puntos.setText("SPACE CAR");
         this->puntos.render(this->Pantalla);
 
-        this->puntos.setTextSize(12);
+        this->puntos.setTextSize(18);
         this->puntos.setTextColor(sf::Color::Black);
-        this->puntos.setPosition(160.f, 380.f);
+        this->puntos.setPosition(310.f, 200.f);
         this->puntos.setText("Presiona Enter para continuar");
         this->puntos.render(this->Pantalla);
 
@@ -149,7 +148,7 @@ public:
         
         this->puntos.setTextSize(16);
         this->puntos.setTextColor(sf::Color::Cyan);
-        this->puntos.setPosition(225.f, 250.f);
+        this->puntos.setPosition(400.f, 300.f);
         this->puntos.setText("Preparate Madafaker");
         this->puntos.render(this->Pantalla);
 
