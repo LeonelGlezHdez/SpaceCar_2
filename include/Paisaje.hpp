@@ -220,7 +220,11 @@ private:
             continue;
         maxy = l.Y;
     }
+    
+ 
 }
+
+
 
     // Renderizar la escena del juego
 void render()

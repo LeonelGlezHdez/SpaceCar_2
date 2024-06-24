@@ -90,6 +90,9 @@ public:
         pointsText.setPosition(10, 10);
     }
 
+
+    
+
     void update() {
         // Actualizar el tiempo transcurrido
         timeElapsed = clock.getElapsedTime();
@@ -117,6 +120,91 @@ private:
 
     sf::Text pointsText;
 };
+
+
+#pragma once
+#include <SFML/Graphics.hpp>
+#include <iostream>
+#include "Enemigo.hpp"
+
+class Señal : public Enemigo
+{
+private:
+    sf::Texture texture;
+    sf::Sprite sprite;
+
+    float scaleX;
+    float scaleY;
+    int hitCount;
+
+    void initVariables()
+    {
+        this->scaleX = 0.014f;
+        this->scaleY = 0.014f;
+        this->hitCount = 0;
+    }
+
+public:
+    void initTexture()
+    {
+        if (!this->texture.loadFromFile("./assets/images/Señal.png"))
+        {
+            // std::cout << "ERROR::Señal::initTexture::No se pudo cargar la textura" << std::endl;
+        }
+    }
+
+    void initSprite()
+    {
+        this->sprite.setTexture(this->texture);
+        this->sprite.scale(scaleX, scaleY);
+    }
+
+    void playDeathSound()
+    {
+        // Implementar sonido de muerte si es necesario
+    }
+
+    void playDamageSound()
+    {
+        // Implementar sonido de daño si es necesario
+    }
+
+    void takeHit()
+    {
+        hitCount++;
+        if (hitCount >= 3) // Si se golpea 3 veces, se destruye
+        {
+            playDeathSound();
+            // Lógica adicional para destruir la señal
+        }
+    }
+
+    int getHitCount()
+    {
+        return hitCount;
+    }
+
+    void draw(sf::RenderWindow& window)
+    {
+        window.draw(this->sprite);
+    }
+
+    void setPosition(float posX, float posY)
+    {
+        this->sprite.setPosition(posX, posY);
+    }
+
+    Señal(float posX = 0.f, float posY = 0.f)
+    {
+        this->initVariables();
+        this->initTexture();
+        this->initSprite();
+        this->setPosition(posX, posY);
+    }
+
+    ~Señal() {}
+};
+
 
 // Clase principal del juego
 class Juego
