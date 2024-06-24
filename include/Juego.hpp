@@ -90,9 +90,6 @@ public:
         pointsText.setPosition(10, 10);
     }
 
-
-    
-
     void update() {
         // Actualizar el tiempo transcurrido
         timeElapsed = clock.getElapsedTime();
@@ -120,7 +117,6 @@ private:
 
     sf::Text pointsText;
 };
-
 
 #pragma once
 #include <SFML/Graphics.hpp>
@@ -205,7 +201,6 @@ public:
     ~Señal() {}
 };
 
-
 // Clase principal del juego
 class Juego
 {
@@ -219,13 +214,19 @@ public:
         // Cargar texturas y objetos del juego
         for (int i = 1; i <= 7; i++)
         {
-            t[i].loadFromFile("images/" + std::to_string(i) + ".png");
+            if (!t[i].loadFromFile("assets/images/" + std::to_string(i) + ".png"))
+            {
+                std::cerr << "ERROR::Juego::initTextures::No se pudo cargar la textura: " << i << std::endl;
+            }
             t[i].setSmooth(true);
             object[i].setTexture(t[i]);
         }
 
         // Cargar y configurar el fondo del juego
-        bg.loadFromFile("assets/images/bg.png");
+        if (!bg.loadFromFile("assets/images/bg.png"))
+        {
+            std::cerr << "ERROR::Juego::initBackground::No se pudo cargar la textura del fondo" << std::endl;
+        }
         bg.setRepeated(true);
         sBackground.setTexture(bg);
         sBackground.setTextureRect(IntRect(0, 0, 5000, 411));
@@ -280,11 +281,17 @@ public:
         H = 1500;
 
         // Inicializar puntos
-        font.loadFromFile("./assets/fonts/Minecraft.ttf");
+        if (!font.loadFromFile("./assets/fonts/Minecraft.ttf"))
+        {
+            std::cerr << "ERROR::Juego::initFont::No se pudo cargar la fuente" << std::endl;
+        }
         puntos = new Puntos(font);
 
         // Cargar y configurar el sprite del carro
-        carTexture.loadFromFile("assets/images/carGrey.png"); // Asegúrate de que la ruta sea correcta
+        if (!carTexture.loadFromFile("assets/images/carYellow.png")) // Asegúrate de que la ruta sea correcta
+        {
+            std::cerr << "ERROR::Juego::initCar::No se pudo cargar la textura del carro" << std::endl;
+        }
         carTexture.setSmooth(true);
         carSprite.setTexture(carTexture);
         carSprite.setOrigin(carTexture.getSize().x / 1.5, carTexture.getSize().y / 1.5);
@@ -349,7 +356,13 @@ private:
         int camH = lines[startPos].y + H;
 
         // Mover el fondo de acuerdo con la curva del segmento actual
-        sBackground.move(-lines[startPos].curve * autoScrollSpeed, 0);
+        sBackground.move(-lines[startPos].curve * autoScrollSpeed * 0.005, 0);
+
+        // Reiniciar la posición del fondo si se mueve demasiado a la izquierda o derecha
+        if (sBackground.getPosition().x < -5000)
+            sBackground.setPosition(-2000, 0);
+        if (sBackground.getPosition().x > 0)
+            sBackground.setPosition(-2000, 0);
 
         // Calcular y proyectar los segmentos de la carretera visibles
         int maxy = height;

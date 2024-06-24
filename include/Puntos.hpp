@@ -1,3 +1,6 @@
+#ifndef PUNTOS_HPP
+#define PUNTOS_HPP
+
 #include <SFML/Graphics.hpp>
 #include <sstream>
 
@@ -10,7 +13,7 @@ public:
         // Configurar el texto de los puntos
         pointsText.setFont(font);
         pointsText.setCharacterSize(35);
-        pointsText.setFillColor(sf::Color::White);
+        pointsText.setFillColor(sf::Color::Black);
         pointsText.setPosition(10, 10);
     }
 
@@ -39,7 +42,7 @@ private:
     sf::Time timeElapsed;
     int points = 0;
 
-    sf::Text timeText;
     sf::Text pointsText;
 };
 
+#endif // PUNTOS_HPP

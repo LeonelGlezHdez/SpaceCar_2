@@ -1,16 +1,17 @@
+#ifndef GAME_HPP
+#define GAME_HPP
+
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/System.hpp>
 #include <SFML/Audio.hpp>
 #include <iostream>
-#include <math.h>
-#include <cmath>
 #include <vector>
 #include <variant>
 #include <thread>
 #include <chrono>
 
-#include <Puntos.hpp>
+#include "Puntos.hpp"
 
 class Game
 {
@@ -75,9 +76,8 @@ private:
         gameOverTone.setBuffer(gameOverBuffer);
     }
 
-
 public:
-    Game() : Pantalla(sf::RenderWindow(sf::VideoMode(768, 411), "SPACE CAR", sf::Style::Titlebar))
+    Game() : Pantalla(sf::RenderWindow(sf::VideoMode(768, 411), "SPACE CAR", sf::Style::Titlebar)), puntos(font)
     {
         this->iniciarVariables();
         this->sonidoJuego();
@@ -114,41 +114,38 @@ public:
 
     void printPoints()
     {
-        this->puntos.setTextSize(20);
-        this->puntos.setTextColor(sf::Color::White);
-        this->puntos.setPosition(10.f, 10.f);
-        this->puntos.render(this->Pantalla);
+        this->pointsText.setCharacterSize(20);
+        this->pointsText.setFillColor(sf::Color::White);
+        this->pointsText.setPosition(10.f, 10.f);
         this->Pantalla.draw(this->pointsText);
-
     }
 
     void loadStartScreen()
     {
         this->renderGameBackground();
 
-        this->puntos.setTextSize(65);
-        this->puntos.setTextColor(sf::Color::Black);
-        this->puntos.setPosition(210.f, 100.f);
-        this->puntos.setText("SPACE CAR");
-        this->puntos.render(this->Pantalla);
+        this->pointsText.setCharacterSize(65);
+        this->pointsText.setFillColor(sf::Color::Black);
+        this->pointsText.setPosition(210.f, 100.f);
+        this->pointsText.setString("SPACE CAR");
+        this->Pantalla.draw(this->pointsText);
 
-        this->puntos.setTextSize(18);
-        this->puntos.setTextColor(sf::Color::Black);
-        this->puntos.setPosition(310.f, 200.f);
-        this->puntos.setText("Presiona Enter para continuar");
-        this->puntos.render(this->Pantalla);
-
+        this->pointsText.setCharacterSize(18);
+        this->pointsText.setFillColor(sf::Color::Black);
+        this->pointsText.setPosition(310.f, 200.f);
+        this->pointsText.setString("Presiona Enter para continuar");
+        this->Pantalla.draw(this->pointsText);
     }
 
     void pantallaCarga()
     {
         this->renderGameBackground();
-        
-        this->puntos.setTextSize(16);
-        this->puntos.setTextColor(sf::Color::Cyan);
-        this->puntos.setPosition(400.f, 300.f);
-        this->puntos.setText("Preparate Madafaker");
-        this->puntos.render(this->Pantalla);
+
+        this->pointsText.setCharacterSize(16);
+        this->pointsText.setFillColor(sf::Color::Cyan);
+        this->pointsText.setPosition(400.f, 300.f);
+        this->pointsText.setString("Preparate Madafaker");
+        this->Pantalla.draw(this->pointsText);
 
         this->printPoints();
     }
@@ -199,7 +196,6 @@ public:
         // Limpiar
         this->Pantalla.clear();
         
-        
         // Dibujar
         if (GameStarted){
             this->printPoints();
@@ -210,5 +206,6 @@ public:
         // Mostrar
         this->Pantalla.display();
     }
-
 };
+
+#endif // GAME_HPP

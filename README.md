@@ -4,6 +4,7 @@ ___
 # Integrantes 
 * Leonardo Franco Pérez_23110186
 * Leonel Salvador Gonzalez Hernadez_23110177
+![alt text](image.png)
 
 # Objetivos 
 
