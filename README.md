@@ -4,7 +4,6 @@ ___
 # Integrantes 
 * Leonardo Franco Pérez_23110186
 * Leonel Salvador Gonzalez Hernadez_23110177
-![alt text](image.png)
 
 # Objetivos 
 
@@ -38,17 +37,20 @@ ___
 Iniciar el Juego:
 
 *Ejecuta el juego desde tu computadora y selecciona "Start Game" en la pantalla de inicio.
+![alt text](image-1.png)
 
 *Controles:
 Mover a la Izquierda: Presiona la tecla de flecha izquierda.
 Mover a la Derecha: Presiona la tecla de flecha derecha.
+![alt text](image-2.png)
+
 Objetivo:
 
 *Evita chocar con otros vehículos y obstáculos en la pista.
 
 *Sobrevive el mayor tiempo posible mientras la velocidad aumenta gradualmente.
 Puntaje:
-
+![alt text](image-3.png)
 *Tu puntaje aumenta en función del tiempo que logres mantenerte en la pista sin colisionar.
 
 # Dependencias
