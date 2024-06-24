@@ -69,7 +69,7 @@ int main(int argc, char const *argv[])
 */
 int main()
 {
-    JuegoCarrerasRetro juego;
+    Paisaje juego;
     juego.run();
     
 

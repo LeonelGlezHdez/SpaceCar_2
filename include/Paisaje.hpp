@@ -5,12 +5,15 @@
 
 using namespace sf;
 
-int width = 1024;
-int height = 768;
-int roadW = 2000;
-int segL = 200;    // segment length
-float camD = 0.84; // camera depth
+// Variables globales para dimensiones y configuraciones del juego
+int width = 1024;   // Ancho de la ventana del juego
+int height = 768;   // Alto de la ventana del juego
+int roadW = 2000;   // Ancho de la carretera
+int segL = 200;     // Longitud de cada segmento de la carretera
+float camD = 0.84;  // Profundidad de la cámara
+float autoScrollSpeed = 150;
 
+// Función para dibujar un cuadrilátero
 void drawQuad(RenderWindow &w, Color c, int x1, int y1, int w1, int x2, int y2, int w2)
 {
     ConvexShape shape(4);
@@ -22,10 +25,11 @@ void drawQuad(RenderWindow &w, Color c, int x1, int y1, int w1, int x2, int y2, 
     w.draw(shape);
 }
 
+// Estructura que representa un segmento de la carretera
 struct Line
 {
-    float x, y, z; // 3d center of line
-    float X, Y, W; // screen coord
+    float x, y, z; // Coordenadas 3D del centro del segmento
+    float X, Y, W; // Coordenadas de la pantalla
     float curve, spriteX, clip, scale;
     Sprite sprite;
 
@@ -34,6 +38,7 @@ struct Line
         spriteX = curve = x = y = z = 0;
     }
 
+    // Proyectar el segmento en coordenadas de pantalla
     void project(int camX, int camY, int camZ)
     {
         scale = camD / (z - camZ);
@@ -42,6 +47,7 @@ struct Line
         W = scale * roadW * width / 2;
     }
 
+    // Dibujar el sprite del segmento
     void drawSprite(RenderWindow &app)
     {
         Sprite s = sprite;
@@ -69,14 +75,17 @@ struct Line
     }
 };
 
-class JuegoCarrerasRetro
+// Clase principal del juego
+class Paisaje
 {
 public:
-    JuegoCarrerasRetro()
+    Paisaje()
     {
+        // Crear ventana del juego
         app.create(VideoMode(width, height), "CAR SPACE");
         app.setFramerateLimit(60);
 
+        // Cargar texturas y objetos del juego
         for (int i = 1; i <= 7; i++)
         {
             t[i].loadFromFile("images/" + std::to_string(i) + ".png");
@@ -84,12 +93,14 @@ public:
             object[i].setTexture(t[i]);
         }
 
+        // Cargar y configurar el fondo del juego
         bg.loadFromFile("assets/images/bg.png");
         bg.setRepeated(true);
         sBackground.setTexture(bg);
         sBackground.setTextureRect(IntRect(0, 0, 5000, 411));
         sBackground.setPosition(-2000, 0);
 
+        // Configurar segmentos de la carretera
         for (int i = 0; i < 1600; i++)
         {
             Line line;
@@ -138,6 +149,7 @@ public:
         H = 1500;
     }
 
+    // Método principal para ejecutar el juego
     void run()
     {
         while (app.isOpen())
@@ -149,17 +161,18 @@ public:
     }
 
 private:
-    RenderWindow app;
-    Texture t[50];
-    Sprite object[50];
-    Texture bg;
-    Sprite sBackground;
-    std::vector<Line> lines;
-    int N;
-    float playerX;
-    int pos;
-    int H;
+    RenderWindow app;        // Ventana del juego
+    Texture t[50];           // Texturas para los objetos del juego
+    Sprite object[50];       // Sprites de los objetos del juego
+    Texture bg;              // Textura del fondo
+    Sprite sBackground;      // Sprite del fondo
+    std::vector<Line> lines; // Vector de segmentos de la carretera
+    int N;                   // Número de segmentos
+    float playerX;           // Posición del jugador en el eje X
+    int pos;                 // Posición del jugador en la carretera
+    int H;                   // Altura de la cámara
 
+    // Manejar eventos de la ventana
     void handleEvents()
     {
         Event e;
@@ -170,84 +183,81 @@ private:
         }
     }
 
+    // Actualizar la lógica del juego
     void update()
+{
+    // Actualizar la posición del jugador con las teclas de dirección
+    if (Keyboard::isKeyPressed(Keyboard::Right))
+        playerX += 0.1;
+    if (Keyboard::isKeyPressed(Keyboard::Left))
+        playerX -= 0.1;
+
+    // Actualizar la posición de la carretera automáticamente
+    pos += autoScrollSpeed;
+    while (pos >= N * segL)
+        pos -= N * segL;
+    while (pos < 0)
+        pos += N * segL;
+
+    int startPos = pos / segL;
+    int camH = lines[startPos].y + H;
+
+    // Mover el fondo de acuerdo con la curva del segmento actual
+    sBackground.move(-lines[startPos].curve * autoScrollSpeed, 0);
+
+    // Calcular y proyectar los segmentos de la carretera visibles
+    int maxy = height;
+    float x = 0, dx = 0;
+    for (int n = startPos; n < startPos + 300; n++)
     {
-        int speed = 0;
+        Line &l = lines[n % N];
+        l.project(playerX * roadW - x, camH, startPos * segL - (n >= N ? N * segL : 0));
+        x += dx;
+        dx += l.curve;
 
-        if (Keyboard::isKeyPressed(Keyboard::Right))
-            playerX += 0.1;
-        if (Keyboard::isKeyPressed(Keyboard::Left))
-            playerX -= 0.1;
-        if (Keyboard::isKeyPressed(Keyboard::Up))
-            speed = 200;
-        if (Keyboard::isKeyPressed(Keyboard::Down))
-            speed = -200;
+        l.clip = maxy;
+        if (l.Y >= maxy)
+            continue;
+        maxy = l.Y;
+    }
+}
 
-        pos += speed;
-        while (pos >= N * segL)
-            pos -= N * segL;
-        while (pos < 0)
-            pos += N * segL;
+    // Renderizar la escena del juego
+void render()
+{
+    app.clear(Color(105, 205, 4));
+    app.draw(sBackground);
 
-        int startPos = pos / segL;
-        int camH = lines[startPos].y + H;
-        if (speed > 0)
-            sBackground.move(-lines[startPos].curve * 2, 0);
-        if (speed < 0)
-            sBackground.move(lines[startPos].curve * 2, 0);
+    int startPos = pos / segL;
+    int maxy = height;
+    float x = 0, dx = 0;
 
-        int maxy = height;
-        float x = 0, dx = 0;
+    for (int n = startPos; n < startPos + 300; n++)
+    {
+        Line &l = lines[n % N];
+        l.project(playerX * roadW - x, lines[startPos].y + H, startPos * segL - (n >= N ? N * segL : 0));
+        x += dx;
+        dx += l.curve;
 
-        for (int n = startPos; n < startPos + 300; n++)
-        {
-            Line &l = lines[n % N];
-            l.project(playerX * roadW - x, camH, startPos * segL - (n >= N ? N * segL : 0));
-            x += dx;
-            dx += l.curve;
+        l.clip = maxy;
+        if (l.Y >= maxy)
+            continue;
+        maxy = l.Y;
 
-            l.clip = maxy;
-            if (l.Y >= maxy)
-                continue;
-            maxy = l.Y;
-        }
+        Color grass = (n / 3) % 2 ? Color(16, 200, 16) : Color(0, 154, 0);
+        Color rumble = (n / 3) % 2 ? Color(255, 255, 255) : Color(0, 0, 0);
+        Color road = (n / 3) % 2 ? Color(107, 107, 107) : Color(105, 105, 105);
+
+        Line p = lines[(n - 1) % N]; // Segmento previo
+
+        drawQuad(app, grass, 0, p.Y, width, 0, l.Y, width);
+        drawQuad(app, rumble, p.X, p.Y, p.W * 1.2, l.X, l.Y, l.W * 1.2);
+        drawQuad(app, road, p.X, p.Y, p.W, l.X, l.Y, l.W);
     }
 
-    void render()
-    {
-        app.clear(Color(105, 205, 4));
-        app.draw(sBackground);
+    for (int n = startPos + 300; n > startPos; n--)
+        lines[n % N].drawSprite(app);
 
-        int startPos = pos / segL;
-        int maxy = height;
-        float x = 0, dx = 0;
-
-        for (int n = startPos; n < startPos + 300; n++)
-        {
-            Line &l = lines[n % N];
-            l.project(playerX * roadW - x, lines[startPos].y + H, startPos * segL - (n >= N ? N * segL : 0));
-            x += dx;
-            dx += l.curve;
-
-            l.clip = maxy;
-            if (l.Y >= maxy)
-                continue;
-            maxy = l.Y;
-
-            Color grass = (n / 3) % 2 ? Color(16, 200, 16) : Color(0, 154, 0);
-            Color rumble = (n / 3) % 2 ? Color(255, 255, 255) : Color(0, 0, 0);
-            Color road = (n / 3) % 2 ? Color(107, 107, 107) : Color(105, 105, 105);
-
-            Line p = lines[(n - 1) % N]; // previous line
-
-            drawQuad(app, grass, 0, p.Y, width, 0, l.Y, width);
-            drawQuad(app, rumble, p.X, p.Y, p.W * 1.2, l.X, l.Y, l.W * 1.2);
-            drawQuad(app, road, p.X, p.Y, p.W, l.X, l.Y, l.W);
-        }
-
-        for (int n = startPos + 300; n > startPos; n--)
-            lines[n % N].drawSprite(app);
-
-        app.display();
-    }
+    app.display();
+  }
 };
