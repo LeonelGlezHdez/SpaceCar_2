@@ -9,9 +9,9 @@ public:
 
         // Configurar el texto de los puntos
         pointsText.setFont(font);
-        pointsText.setCharacterSize(24);
+        pointsText.setCharacterSize(35);
         pointsText.setFillColor(sf::Color::White);
-        pointsText.setPosition(10, 40);
+        pointsText.setPosition(10, 10);
     }
 
     void update() {
@@ -42,3 +42,4 @@ private:
     sf::Text timeText;
     sf::Text pointsText;
 };
+

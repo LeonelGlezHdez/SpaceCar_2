@@ -12,8 +12,6 @@
 
 #include <Puntos.hpp>
 
-
-
 class Game
 {
 private:
@@ -214,4 +212,3 @@ public:
     }
 
 };
-
