@@ -36,13 +36,20 @@ ___
 # Jugabilidad 
 Iniciar el Juego:
 
-*Ejecuta el juego desde tu computadora y selecciona "Start Game" en la pantalla de inicio.
 ![alt text](image-1.png)
 
+*Ejecuta el juego desde tu computadora y selecciona "Start Game" en la pantalla de inicio.
+
 *Controles:
+
+![alt text](image-4.png)
+
 Mover a la Izquierda: Presiona la tecla de flecha izquierda.
+
+![alt text](image-5.png)
+
 Mover a la Derecha: Presiona la tecla de flecha derecha.
-![alt text](image-2.png)
+
 
 Objetivo:
 
@@ -50,7 +57,9 @@ Objetivo:
 
 *Sobrevive el mayor tiempo posible mientras la velocidad aumenta gradualmente.
 Puntaje:
+
 ![alt text](image-3.png)
+
 *Tu puntaje aumenta en función del tiempo que logres mantenerte en la pista sin colisionar.
 
 # Dependencias
